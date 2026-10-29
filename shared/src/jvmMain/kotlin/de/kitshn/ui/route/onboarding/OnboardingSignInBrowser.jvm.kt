@@ -8,6 +8,8 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import com.multiplatform.webview.web.PlatformWebViewParams
+import de.kitshn.api.tandoor.TandoorCredentials
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -92,3 +94,8 @@ actual fun InitializeWebView(
         }
     }
 }
+
+@Composable
+actual fun rememberSignInPlatformWebViewParams(
+    credentials: TandoorCredentials
+): PlatformWebViewParams? = null

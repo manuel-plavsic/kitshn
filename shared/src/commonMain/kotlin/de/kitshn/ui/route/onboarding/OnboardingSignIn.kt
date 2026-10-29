@@ -681,6 +681,14 @@ fun RouteOnboardingSignIn(
 
                     OutlinedButton(
                         onClick = {
+                            p.vm.browserSignInCredentials = TandoorCredentials(
+                                instanceUrl = instanceUrlValue,
+                                customHeaders = customHeaders.toList(),
+                                mtlsCertificateAlias = mtlsCertificateAlias,
+                                mtlsCertificateData = mtlsCertificateData,
+                                mtlsCertificatePassword = mtlsCertificatePassword,
+                            )
+
                             p.vm.navHostController?.navigate(
                                 "onboarding/signIn/browser/${
                                     kotlin.io.encoding.Base64.encode(

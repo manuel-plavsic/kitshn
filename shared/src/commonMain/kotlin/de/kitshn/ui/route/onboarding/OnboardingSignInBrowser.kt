@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.savedstate.read
 import com.multiplatform.webview.web.LoadingState
+import com.multiplatform.webview.web.PlatformWebViewParams
 import com.multiplatform.webview.web.WebView
 import com.multiplatform.webview.web.rememberWebViewNavigator
 import com.multiplatform.webview.web.rememberWebViewState
@@ -67,6 +68,13 @@ fun RouteOnboardingSignInBrowser(
     }
 
     val instanceUrl = Base64.decode(instanceUrlEncoded).decodeToString()
+
+    // keep custom headers and mTLS settings from the sign-in form
+    val baseCredentials = remember(instanceUrl) {
+        p.vm.browserSignInCredentials
+            ?.takeIf { it.instanceUrl == instanceUrl }
+            ?: TandoorCredentials(instanceUrl = instanceUrl)
+    }
 
     Scaffold(
         topBar = {
@@ -146,10 +154,7 @@ fun RouteOnboardingSignInBrowser(
                     // check if user is authenticated
                     val cookies = webViewState.cookieManager.getCookies(instanceUrl)
                         .joinToString(separator = " ")
-                    val credentials = TandoorCredentials(
-                        instanceUrl = instanceUrl,
-                        cookie = cookies
-                    )
+                    val credentials = baseCredentials.copy(cookie = cookies)
 
                     val client = TandoorClient(credentials)
 
@@ -169,7 +174,8 @@ fun RouteOnboardingSignInBrowser(
                 WebView(
                     modifier = Modifier.fillMaxSize(),
                     state = webViewState,
-                    navigator = webViewNavigator
+                    navigator = webViewNavigator,
+                    platformWebViewParams = rememberSignInPlatformWebViewParams(baseCredentials)
                 )
             }
         }
@@ -181,3 +187,9 @@ fun RouteOnboardingSignInBrowser(
 expect fun InitializeWebView(
     onInitialized: () -> Unit
 )
+
+// needed to answer mTLS client certificate requests on android
+@Composable
+expect fun rememberSignInPlatformWebViewParams(
+    credentials: TandoorCredentials
+): PlatformWebViewParams?

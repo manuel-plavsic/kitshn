@@ -71,6 +71,9 @@ class KitshnViewModel(
     var navHostController: NavHostController? = null
     var mainSubNavHostController: NavHostController? = null
 
+    /** Connection settings (custom headers, mTLS) handed from the sign-in form to the browser sign-in */
+    var browserSignInCredentials: TandoorCredentials? = null
+
     var tandoorClient: TandoorClient?
         get() = session.client
         set(value) { session.client = value }
